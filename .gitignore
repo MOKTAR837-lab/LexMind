@@ -1,0 +1,12 @@
+﻿__pycache__/
+*.py[cod]
+venv/
+.env
+.env.local
+.vscode/
+.idea/
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+*.log
+*.db
+.DS_Store
