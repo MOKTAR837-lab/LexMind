@@ -1,4 +1,4 @@
-﻿FROM python:3.11-slim
+FROM python:3.11-slim
 
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
@@ -15,6 +15,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app ./app
 
-RUN mkdir -p /app/uploads
-
-CMD ["uvicorn", "app.main_v3:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+RUN mkdir -p /app/uploadsCMD ["uvicorn", "app.main_simple:app", ...]
