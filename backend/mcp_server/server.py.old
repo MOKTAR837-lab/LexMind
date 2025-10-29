@@ -1,0 +1,81 @@
+﻿import asyncio
+import json
+from typing import Any
+
+async def handle_request(request: dict[str, Any]) -> dict[str, Any]:
+    '''Gère une requête MCP'''
+    method = request.get('method', '')
+    
+    if method == 'tools/list':
+        return {
+            'tools': [
+                {
+                    'name': 'search_documents',
+                    'description': 'Recherche dans les documents du cabinet',
+                    'inputSchema': {
+                        'type': 'object',
+                        'properties': {
+                            'query': {'type': 'string', 'description': 'Requête de recherche'},
+                            'limit': {'type': 'integer', 'default': 5}
+                        },
+                        'required': ['query']
+                    }
+                },
+                {
+                    'name': 'get_info',
+                    'description': 'Informations sur LexMind',
+                    'inputSchema': {'type': 'object', 'properties': {}}
+                }
+            ]
+        }
+    
+    elif method == 'tools/call':
+        tool_name = request.get('params', {}).get('name', '')
+        args = request.get('params', {}).get('arguments', {})
+        
+        if tool_name == 'search_documents':
+            query = args.get('query', '')
+            return {
+                'content': [
+                    {
+                        'type': 'text',
+                        'text': f'Recherche pour: {query}\n\nMode test - pas encore connecté au backend.'
+                    }
+                ]
+            }
+        
+        elif tool_name == 'get_info':
+            return {
+                'content': [
+                    {
+                        'type': 'text',
+                        'text': 'LexMind v0.3 - Backend opérationnel sur port 8072'
+                    }
+                ]
+            }
+    
+    return {'error': 'Méthode non supportée'}
+
+async def main():
+    print('LexMind MCP Server v0.3')
+    print('Prêt pour connexion Claude Desktop')
+    print('')
+    
+    # Simulation - en attente de stdin
+    while True:
+        try:
+            line = await asyncio.get_event_loop().run_in_executor(None, input)
+            if not line:
+                break
+            
+            request = json.loads(line)
+            response = await handle_request(request)
+            print(json.dumps(response))
+            
+        except (EOFError, KeyboardInterrupt):
+            break
+        except Exception as e:
+            print(json.dumps({'error': str(e)}))
+
+if __name__ == '__main__':
+    asyncio.run(main())
